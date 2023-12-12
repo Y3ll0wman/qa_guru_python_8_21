@@ -29,9 +29,9 @@ def mobile_management():
 
         # Set other BrowserStack capabilities
         'bstack:options': {
-            "projectName": "Wikiperdia tests",
-            "buildName": "browserstack-wikipedia-build",
-            "sessionName": "BStack wikipedia_test",
+            "projectName": "Ios tests",
+            "buildName": "browserstack-simple-app-build",
+            "sessionName": "BStack Simple app test",
 
             # Set your access credentials
             "userName": username,

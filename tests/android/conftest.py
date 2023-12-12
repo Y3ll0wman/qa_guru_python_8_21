@@ -29,7 +29,7 @@ def mobile_management():
 
         # Set other BrowserStack capabilities
         'bstack:options': {
-            "projectName": "Wikiperdia tests",
+            "projectName": "Android tests",
             "buildName": "browserstack-wikipedia-build",
             "sessionName": "BStack wikipedia_test",
 
