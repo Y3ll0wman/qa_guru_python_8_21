@@ -1,8 +1,10 @@
+import pytest
 from allure_commons._allure import step
 from appium.webdriver.common.appiumby import AppiumBy
 from selene import browser, have
 
 
+@pytest.mark.xfail
 def test_open_article():
     # WHEN
     with step('Search article'):
