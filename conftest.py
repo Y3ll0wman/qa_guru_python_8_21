@@ -1,20 +1,13 @@
 import allure
 import allure_commons
 import pytest
-import os
 import config
 
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
 from selene import browser, support
-from dotenv import load_dotenv
 from appium import webdriver
 from qa_guru_python_8_21.utils import allure_attach
-
-
-@pytest.fixture(scope='function', autouse=True)
-def load_env():
-    load_dotenv()
 
 
 @pytest.fixture(scope='function')
@@ -70,10 +63,6 @@ def android_mobile_management():
 
 @pytest.fixture(scope='function')
 def ios_mobile_management():
-    username = os.getenv('USER_NAME')
-    access_key = os.getenv('ACCESS_KEY')
-    remote_browser_url = os.getenv('REMOTE_BROWSER_URL')
-
     options = XCUITestOptions().load_capabilities({
         # Specify device and os_version for testing
         "platformName": "ios",
