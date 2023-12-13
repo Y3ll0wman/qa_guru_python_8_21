@@ -7,6 +7,9 @@ from selene import browser, have
 
 def test_search(android_mobile_management):
     # WHEN
+    with step('Press Skip button'):
+        browser.element((AppiumBy.ID, 'org.wikipedia.alpha:id/fragment_onboarding_skip_button')).click()
+
     with step('Type search'):
         browser.element((AppiumBy.ACCESSIBILITY_ID, 'Search Wikipedia')).click()
         browser.element((AppiumBy.ID, 'org.wikipedia.alpha:id/search_src_text')).type('Appium')
@@ -18,15 +21,16 @@ def test_search(android_mobile_management):
         results.first.should(have.text('Appium'))
 
 
-@pytest.mark.xfail
 def test_open_article(android_mobile_management):
     # WHEN
+    with step('Press Skip button'):
+        browser.element((AppiumBy.ID, 'org.wikipedia.alpha:id/fragment_onboarding_skip_button')).click()
+
     with step('Search article'):
         browser.element((AppiumBy.ACCESSIBILITY_ID, 'Search Wikipedia')).click()
         browser.element((AppiumBy.ID, 'org.wikipedia.alpha:id/search_src_text')).type('Appium')
         browser.element((AppiumBy.ID, 'org.wikipedia.alpha:id/page_list_item_title')).click()
 
     # THEN
-    with step('Verify article found'):
-        results = browser.element((AppiumBy.ID, 'org.wikipedia.alpha:id/pcs'))
-        results.should(have.text('Appium'))
+    with step('Verify article title'):
+        browser.element((AppiumBy.ACCESSIBILITY_ID, 'Appium'))
