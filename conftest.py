@@ -1,11 +1,14 @@
+import allure
+import allure_commons
 import pytest
+import os
+import requests
+
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
-from selene import browser
+from selene import browser, support
 from dotenv import load_dotenv
-import os
-
-from selenium import webdriver
+from appium import webdriver
 
 
 @pytest.fixture(scope='function', autouse=True)
@@ -40,14 +43,55 @@ def android_mobile_management():
         }
     })
 
-    # browser.config.driver = webdriver.Remote("http://hub.browserstack.com/wd/hub", options=options)
-    browser.config.driver_remote_url = remote_browser_url
-    browser.config.driver_options = options
+    # browser.config.driver_remote_url = remote_browser_url
+    # browser.config.driver_options = options
+
+    with allure.step('setup app session'):
+        browser.config.driver = webdriver.Remote(
+            remote_browser_url,
+            options=options
+        )
+
     browser.config.timeout = 10.0
+
+    browser.config._wait_decorator = support._logging.wait_with(
+        context=allure_commons._allure.StepContext)
 
     yield
 
-    browser.quit()
+    allure.attach(
+        browser.driver.get_screenshot_as_png(),
+        name='screenshot',
+        attachment_type=allure.attachment_type.PNG
+    )
+
+    allure.attach(
+        browser.driver.page_source,
+        name='page_source_xml',
+        attachment_type=allure.attachment_type.XML
+    )
+
+    session_id = browser.driver.session_id
+
+    with allure.step('tear down app session'):
+        browser.quit()
+
+    bstack_session = requests.get(
+        f'https://api.browserstack.com/app-automate/sessions/{session_id}.json',
+        auth=(username, access_key)
+    ).json()
+
+    video_url = bstack_session['automation_session']['video_url']
+
+    allure.attach(
+        '<html><body>'
+        '<video width="100%" height="100%" controls autoplay>'
+        f'<source src="{video_url}" type="video/mp4">'
+        '</video>'
+        '</body></html>',
+        name='video recording',
+        attachment_type=allure.attachment_type.HTML
+    )
 
 
 @pytest.fixture(scope='function')
@@ -77,11 +121,52 @@ def ios_mobile_management():
         }
     })
 
-    # browser.config.driver = webdriver.Remote("http://hub.browserstack.com/wd/hub", options=options)
-    browser.config.driver_remote_url = remote_browser_url
-    browser.config.driver_options = options
+    # browser.config.driver_remote_url = remote_browser_url
+    # browser.config.driver_options = options
+
+    with allure.step('setup app session'):
+        browser.config.driver = webdriver.Remote(
+            remote_browser_url,
+            options=options
+        )
+
     browser.config.timeout = 10.0
+
+    browser.config._wait_decorator = support._logging.wait_with(
+        context=allure_commons._allure.StepContext)
 
     yield
 
-    browser.quit()
+    allure.attach(
+        browser.driver.get_screenshot_as_png(),
+        name='screenshot',
+        attachment_type=allure.attachment_type.PNG
+    )
+
+    allure.attach(
+        browser.driver.page_source,
+        name='page_source_xml',
+        attachment_type=allure.attachment_type.XML
+    )
+
+    session_id = browser.driver.session_id
+
+    with allure.step('tear down app session'):
+        browser.quit()
+
+        bstack_session = requests.get(
+            f'https://api.browserstack.com/app-automate/sessions/{session_id}.json',
+            auth=(username, access_key)
+        ).json()
+
+    video_url = bstack_session['automation_session']['video_url']
+
+    allure.attach(
+        '<html><body>'
+        '<video width="100%" height="100%" controls autoplay>'
+        f'<source src="{video_url}" type="video/mp4">'
+        '</video>'
+        '</body></html>',
+        name='video recording',
+        attachment_type=allure.attachment_type.HTML
+    )
